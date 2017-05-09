@@ -1,0 +1,8 @@
+camel:
+  springboot:
+    name: fis-org-lookup-service
+
+endpoints:
+  enabled: false
+  health:
+    enabled: true

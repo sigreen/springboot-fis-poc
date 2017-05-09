@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Configures the Camel Context -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel-cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd             http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd     http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+    <bean
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer" id="bean-66d2672d-c6c0-4984-bc31-90bc30bfaaef"/>
+    <!-- Swap-in Oracle instead of Derby during onsite workshop -->
+    <!-- 	        <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> -->
+    <!-- 	            <property name="driverClassName" value="oracle.jdbc.OracleDriver"/> -->
+    <!-- 	            <property name="url" value="jdbc:oracle:thin:@//{{sample1b.jdbc.hostname}}:{{sample1b.jdbc.port}}/{{sample1b.jdbc.sid}}"/> -->
+    <!-- 	            <property name="username" value="{{sample1b.jdbc.username}}"/> -->
+    <!-- 	            <property name="password" value="{{sample1b.jdbc.password}}"/> -->
+    <!-- 	            <property name="maxIdle" value="3"/> -->
+    <!-- 	            <property name="maxActive" value="6"/> -->
+    <!-- 	        </bean> -->
+    <bean class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close" id="dataSource">
+        <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+        <property name="url" value="jdbc:derby:memory:orders;create=true"/>
+        <property name="username" value=""/>
+        <property name="password" value=""/>
+    </bean>
+    <bean class="org.apache.camel.component.sql.SqlComponent" id="sql">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!-- bean which creates/destroys the database table for this example -->
+    <bean class="com.example.jdbc.DatabaseBean" destroy-method="destroy"
+        id="initDatabase" init-method="create">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <camelContext id="_camelContext1"
+        xmlns="http://camel.apache.org/schema/spring" xmlns:order="http://fabric8.com/examples/order/v7">
+        <dataFormats>
+            <json id="organization" library="Jackson" unmarshalTypeName="com.example.rest.Organization"/>
+        </dataFormats>
+        <restConfiguration apiContextPath="/api-doc" bindingMode="json"
+            component="servlet" contextPath="/api" enableCORS="true">
+            <dataFormatProperty key="prettyPrint" value="true"/>
+            <apiProperty key="host" value=""/>
+            <apiProperty key="api.version" value="1.0.0"/>
+            <apiProperty key="api.title" value="Organization REST service"/>
+            <apiProperty key="api.description" value="Camel Rest Example with Swagger that provides an organization name lookup service"/>
+            <apiProperty key="api.contact.name" value="Simon Green"/>
+        </restConfiguration>
+        <!-- defines the rest services using the context-path /organization -->
+        <rest consumes="application/json" path="/orgNameSearch" produces="application/json">
+            <description>Organization rest service</description>
+            <!-- this is a rest GET to view an organization by the given id -->
+            <get outType="com.example.rest.Organization" uri="/{id}">
+                <description>Find organization by ord_id</description>
+                <to uri="direct:orgById"/>
+            </get>
+            <!-- this is a rest GET to view paginated results using a partial organization name -->
+            <get outType="com.example.rest.Organization" uri="/{partialOrgName}/{pageNumber}/{pageSize}">
+                <description>Find organization by partial organization name and then return paginated results</description>
+                <to uri="direct:paginate"/>
+            </get>
+            <!-- this is a rest PUT to create/update an Organization -->
+            <put type="com.example.rest.Organization">
+                <description>Updates or create an organization</description>
+                <to uri="direct:putOrganization"/>
+            </put>
+            <!-- this is a rest GET to find all organizations -->
+            <get outType="com.example.rest.Organization[]" uri="/findAll">
+                <description>Find all organizations</description>
+                <to uri="direct:findAll"/>
+            </get>
+        </rest>
+        <route id="populateDB" startupOrder="1">
+            <!--             <from id="_from1" uri="file:src/data?noop=true"/> -->
+            <from id="_from1" uri="timer://loadBankCSV?repeatCount=1"/>
+            <setBody id="_setBody1">
+                <simple>resource:classpath:data/banks.csv</simple>
+            </setBody>
+            <unmarshal id="_unmarshal1">
+                <csv/>
+            </unmarshal>
+            <split id="_split1">
+                <simple>${body}</simple>
+                <to id="_to1" uri="sql:insert into ORGANIZATION (org_id, org_name) values (#,#)"/>
+            </split>
+            <log id="_log1" message="Updated organization database."/>
+        </route>
+        <route id="putOrganization">
+            <from id="_from2" uri="direct:putOrganization"/>
+            <setHeader headerName="org_id" id="_setHeader1">
+                <simple>${body.org_id}</simple>
+            </setHeader>
+            <setHeader headerName="org_name" id="_setHeader2">
+                <simple>${body.org_name}</simple>
+            </setHeader>
+            <to id="_to2" uri="sql:select org_id, org_name from organization where org_id=:#org_id"/>
+            <choice id="_choice1">
+                <when id="_when1">
+                    <simple>${header.CamelSqlRowCount} &gt; 0</simple>
+                    <to id="_to3" uri="sql:update organization set org_name=:#org_name where org_id=:#org_id"/>
+                </when>
+                <otherwise id="_otherwise1">
+                    <to id="_to4" uri="sql:insert INTO organization (org_id, org_name) VALUES (:#org_id,:#org_name )"/>
+                </otherwise>
+            </choice>
+            <to id="_to5" uri="sql:select org_id, org_name from organization where org_id=:#org_id"/>
+            <setHeader headerName="node" id="_setHeader3">
+                <constant>1</constant>
+            </setHeader>
+        </route>
+        <route id="paginate">
+            <from id="_from3" uri="direct:paginate"/>
+            <setHeader headerName="partialOrgNameWildcard" id="_setHeader4">
+                <simple>%${header.partialOrgName}%</simple>
+            </setHeader>
+            <to id="_to6" uri="sql:select org_id, org_name from organization where org_name like :#partialOrgNameWildcard offset :#pageNumber rows fetch first :#pageSize rows only"/>
+            <setHeader headerName="node" id="_setHeader5">
+                <constant>1</constant>
+            </setHeader>
+        </route>
+        <route id="orgById">
+            <from id="_from4" uri="direct:orgById"/>
+            <to id="_to7" uri="sql:select org_id, org_name from organization where org_id=:#id"/>
+            <setHeader headerName="node" id="_setHeader6">
+                <constant>1</constant>
+            </setHeader>
+        </route>
+        <route id="findAll">
+            <from id="_from5" uri="direct:findAll"/>
+            <to id="_to8" uri="sql:select org_id, org_name from organization"/>
+            <setHeader headerName="node" id="_setHeader7">
+                <constant>1</constant>
+            </setHeader>
+        </route>
+    </camelContext>
+</beans>
