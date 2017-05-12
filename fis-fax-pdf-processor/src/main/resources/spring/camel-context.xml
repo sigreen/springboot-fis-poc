@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+	<bean id="pdfProcessor" class="com.example.processor.PdfProcessor" />
+	<bean id="saveSinglePdf" class="com.example.processor.SaveSinglePdf" />
+	<bean id="saveTif" class="com.example.processor.PDFToTIFF" />
+
+
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+		<route>
+			<from id="_from1" uri="file:src/data?noop=true" />
+			<convertBodyTo type="java.io.File" />
+			<process ref="pdfProcessor" />
+			<split>
+				<simple>${body}</simple>
+				<process ref="saveSinglePdf" />
+				<setHeader headerName="pageNumber">
+					<simple>${header.CamelSplitIndex}++</simple>
+				</setHeader>
+				<setHeader headerName="indexFile">
+					<simple>concat(${header.indexFile} + ${file:name.noext}-page-${header.pageNumber}.tif) + "\n")</simple>
+				</setHeader>
+				<process ref="saveTif" />
+				<to uri="file:target/data/out?fileName=${file:name.noext}-page-${header.pageNumber}.tif" />
+			</split>
+		</route>
+	</camelContext>
+
+</beans>
