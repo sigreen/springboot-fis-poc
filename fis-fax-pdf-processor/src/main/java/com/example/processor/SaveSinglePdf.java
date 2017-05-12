@@ -12,7 +12,7 @@ public class SaveSinglePdf implements Processor {
 	  PDDocument document = (PDDocument) exchange.getIn().getBody();
 	  ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	  document.save(baos);
-	  document.close();
 	  exchange.getIn().setBody(baos.toByteArray());
+	  document.close();
   }
 }
