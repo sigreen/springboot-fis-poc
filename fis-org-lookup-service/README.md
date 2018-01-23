@@ -11,6 +11,16 @@ This project demonstrates a Restful wrapper around a relational database.  Using
 
 The project can run either as a standalone Java process or in a cloud environment.  An OpenShift environment must be present for deployment to to a cloud environment.  For the purpose of testing, I prefer to use [Minishift](https://fabric8.io/guide/getStarted/minishift.html)
 
+The following are required to run this project:
+
+1. JDK 1.8 or newer
+2. Maven 3.3 or newer
+
+### Building
+
+
+1. Update the `support\sample-settings.xml` file with your local maven respository path (located on line 3)
+
 ## Deployment
 
 This project can be deployed using two methods:
@@ -25,7 +35,7 @@ The standalone method takes advantage of the [Camel Spring Boot Plugin](http://c
 Execute the following command from the root project directory:
 
 ```
-mvn spring-boot:run -Dspring.profiles.active=dev
+mvn -s support/sample-settings.xml spring-boot:run -Dspring.profiles.active=dev
 ```
 
 Once the spring boot service has started, you can test the REST API by executing the following command
@@ -67,7 +77,7 @@ oc new-project fis-org-lookup-service --description="Fuse Integration Services D
 Execute the following command which will execute the *ocp* profile that executes the `clean fabric8:deploy` maven goal:
 
 ```
-mvn -P ocp
+mvn -s support/sample-settings.xml -P ocp
 ```
 
 The fabric8 maven plugin will perform the following actions:
