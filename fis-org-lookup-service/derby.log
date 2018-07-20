@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Fri Jul 20 13:53:37 EDT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.13.1.1 - (1765088): instance a816c00e-0164-b8d3-5d65-00002f2a5408 
+on database directory memory:/Users/sigreen/Documents/projects/uscellular/poc/springboot-fis-poc/fis-org-lookup-service/orders with class loader java.net.URLClassLoader@331cca21 
+Loaded from file:/Users/sigreen/.m2/repository/org/apache/derby/derby/10.13.1.1/derby-10.13.1.1.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_51-b16
+user.dir=/Users/sigreen/Documents/projects/uscellular/poc/springboot-fis-poc/fis-org-lookup-service
+os.name=Mac OS X
+os.arch=x86_64
+os.version=10.13.6
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

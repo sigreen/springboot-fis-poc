@@ -8,26 +8,26 @@
 	<version>1.0.0</version>
 	<name>API Provider :: Organization Lookup Service :: API Provider</name>
 	<description>RESTFul service to lookup organizational information</description>
-	<properties>
-		<spring-boot.version>1.4.1.RELEASE</spring-boot.version>
-		<fabric8.version>2.2.170.redhat-000010</fabric8.version>
-		<maven-compiler-plugin.version>3.3</maven-compiler-plugin.version>
-		<fabric8.maven.plugin.version>3.1.80.redhat-000010</fabric8.maven.plugin.version>
-		<run.profiles>dev</run.profiles>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
-	</properties>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.fabric8</groupId>
-				<artifactId>fabric8-project-bom-camel-spring-boot</artifactId>
-				<version>${fabric8.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <properties>
+    <spring-boot.version>1.5.4.RELEASE</spring-boot.version>
+    <fabric8.version>3.0.11.fuse-000039-redhat-1</fabric8.version>
+    <run.profiles>dev</run.profiles>
+    <maven-compiler-plugin.version>3.6.0</maven-compiler-plugin.version>
+    <fabric8.maven.plugin.version>3.5.33.fuse-000067-redhat-1</fabric8.maven.plugin.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.fabric8</groupId>
+        <artifactId>fabric8-project-bom-camel-spring-boot</artifactId>
+        <version>3.0.11.fuse-000039-redhat-1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
@@ -54,15 +54,6 @@
 			<artifactId>camel-swagger-java-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.restlet.jee</groupId>
-			<artifactId>org.restlet.ext.spring</artifactId>
-			<version>2.2.3</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-restlet</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-groovy</artifactId>
 		</dependency>
@@ -72,11 +63,11 @@
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-http4</artifactId>
+			<artifactId>camel-http4-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jackson</artifactId>
+			<artifactId>camel-jackson-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>xom</groupId>
@@ -120,71 +111,34 @@
 		</dependency>
 
 	</dependencies>
-	<repositories>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>fuse-public-repository</id>
-			<name>FuseSource Community Release Repository</name>
-			<url>https://repo.fusesource.com/nexus/content/groups/public</url>
-		</repository>
-		<repository>
-			<id>maven-restlet</id>
-			<name>Public online Restlet repository</name>
-			<url>http://maven.restlet.org</url>
-		</repository>
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>red-hat-ga-repository</id>
-			<name>Red Hat GA Repository</name>
-			<url>https://maven.repository.redhat.com/ga</url>
-		</repository>
-		<repository>
-			<id>camelStaging</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/fusesource_releases_external-2384</url>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>fuse-public-repository</id>
-			<name>FuseSource Community Release Repository</name>
-			<url>https://repo.fusesource.com/nexus/content/groups/public</url>
-		</pluginRepository>
-		<pluginRepository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-			<id>red-hat-ga-repository</id>
-			<name>Red Hat GA Repository</name>
-			<url>https://maven.repository.redhat.com/ga</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>camelStaging</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/fusesource_releases_external-2384</url>
-		</pluginRepository>
-	</pluginRepositories>
+  <repositories>
+    <repository>
+      <id>red-hat-ga-repository</id>
+      <url>https://maven.repository.redhat.com/ga</url>
+    </repository>
+    <repository>
+      <id>red-hat-early-access-repository</id>
+      <url>https://maven.repository.redhat.com/earlyaccess/all</url>
+    </repository>
+    <repository>
+      <id>jboss-early-access-repository</id>
+      <url>https://repository.jboss.org/nexus/content/groups/ea</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>red-hat-ga-repository</id>
+      <url>https://maven.repository.redhat.com/ga</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>red-hat-early-access-repository</id>
+      <url>https://maven.repository.redhat.com/earlyaccess/all</url>
+    </pluginRepository>
+    <pluginRepository>
+      <id>jboss-early-access-repository</id>
+      <url>https://repository.jboss.org/nexus/content/groups/ea</url>
+    </pluginRepository>
+  </pluginRepositories>
 	<build>
 		<defaultGoal>spring-boot:run</defaultGoal>
 		<plugins>
