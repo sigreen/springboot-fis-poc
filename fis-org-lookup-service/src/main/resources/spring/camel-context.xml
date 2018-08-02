@@ -35,7 +35,7 @@
             <json id="organization" library="Jackson" unmarshalTypeName="com.example.rest.Organization"/>
         </dataFormats>
         <restConfiguration apiContextPath="/api-doc" bindingMode="json"
-            component="servlet" contextPath="/api" enableCORS="true">
+            component="servlet" contextPath="/camel" enableCORS="true">
             <dataFormatProperty key="prettyPrint" value="true"/>
             <apiProperty key="host" value=""/>
             <apiProperty key="api.version" value="1.0.0"/>
@@ -44,25 +44,30 @@
             <apiProperty key="api.contact.name" value="Simon Green"/>
         </restConfiguration>
         <!-- defines the rest services using the context-path /organization -->
-        <rest consumes="application/json" path="/orgNameSearch" produces="application/json">
-            <description>Organization rest service</description>
+        <rest consumes="application/json"
+            id="rest-16cb2e7d-fc4a-4e96-9d2e-bea922dcf8ea"
+            path="/orgNameSearch" produces="application/json">
+            <description >Organization rest service</description>
             <!-- this is a rest GET to view an organization by the given id -->
-            <get outType="com.example.rest.Organization" uri="/{id}">
+            <get id="get-ba134bdd-b5d5-4a0b-b3f5-b0014e4464e1"
+                outType="com.example.rest.Organization" uri="/{id}">
                 <description>Find organization by ord_id</description>
                 <to uri="direct:orgById"/>
             </get>
             <!-- this is a rest GET to view paginated results using a partial organization name -->
-            <get outType="com.example.rest.Organization" uri="/{partialOrgName}/{pageNumber}/{pageSize}">
+            <get id="get-8e32984f-51ce-4d27-a27b-40c23ed2cf5f"
+                outType="com.example.rest.Organization" uri="/{partialOrgName}/{pageNumber}/{pageSize}">
                 <description>Find organization by partial organization name and then return paginated results</description>
                 <to uri="direct:paginate"/>
             </get>
             <!-- this is a rest PUT to create/update an Organization -->
-            <put type="com.example.rest.Organization">
+            <put id="put-5b2e3bcd-76bb-4bc6-8cdd-de27a7d5983f" type="com.example.rest.Organization">
                 <description>Updates or create an organization</description>
                 <to uri="direct:putOrganization"/>
             </put>
             <!-- this is a rest GET to find all organizations -->
-            <get outType="com.example.rest.Organization[]" uri="/findAll">
+            <get id="get-ae90bd24-bd3a-4beb-8303-efb26aef0888"
+                outType="com.example.rest.Organization[]" uri="/findAll">
                 <description>Find all organizations</description>
                 <to uri="direct:findAll"/>
             </get>

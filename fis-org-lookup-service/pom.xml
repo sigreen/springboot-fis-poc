@@ -66,10 +66,6 @@
 			<artifactId>camel-http4-starter</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-jackson-starter</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
 			<version>1.2.5</version>

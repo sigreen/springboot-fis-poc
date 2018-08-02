@@ -35,7 +35,7 @@ The standalone method takes advantage of the [Camel Spring Boot Plugin](http://c
 Execute the following command from the root project directory:
 
 ```
-mvn -s support/sample-settings.xml spring-boot:run -Dspring.profiles.active=dev
+mvn -s support/settings.xml spring-boot:run -Dspring.profiles.active=dev
 ```
 
 Once the spring boot service has started, you can test the REST API by executing the following command
@@ -77,7 +77,7 @@ oc new-project fis-org-lookup-service --description="Fuse Integration Services D
 Execute the following command which will execute the *ocp* profile that executes the `clean fabric8:deploy` maven goal:
 
 ```
-mvn -s support/sample-settings.xml -P ocp
+mvn -s support/settings.xml -P ocp
 ```
 
 The fabric8 maven plugin will perform the following actions:
